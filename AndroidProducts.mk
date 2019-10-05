@@ -14,7 +14,7 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/aosp_oxygen.mk
+    $(LOCAL_DIR)/revengeos_oxygen.mk
 
 COMMON_LUNCH_CHOICES := \
-    aosp_oxygen-userdebug
+    revengeos_oxygen-userdebug
