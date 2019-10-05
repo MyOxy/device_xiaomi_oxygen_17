@@ -14,15 +14,23 @@
 # limitations under the License.
 #
 
-$(call inherit-product, device/xiaomi/oxygen/full_oxygen.mk)
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
-# Inherit some common PEX stuff.
+# Inherit from oxygen device
+$(call inherit-product, device/xiaomi/oxygen/device.mk)
+
+# Inherit some common AOSP-EXTENDED stuff.
 $(call inherit-product, vendor/aosp/config/common_full_phone.mk)
-GAPPS_VARIANT := mini
-TARGET_GAPPS_ARCH := arm64
-CUSTOM_BUILD_TYPE := OFFICIAL
 
+# Device identifier. This must come after all inclusions
+PRODUCT_DEVICE := oxygen
 PRODUCT_NAME := aosp_oxygen
+PRODUCT_BRAND := Xiaomi
+PRODUCT_MODEL := Mi Max 2
+PRODUCT_MANUFACTURER := Xiaomi
+TARGET_VENDOR := Xiaomi
 BOARD_VENDOR := Xiaomi
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi

@@ -18,6 +18,10 @@
 
 set -e
 
+DEVICE=oxygen
+DEVICE_COMMON=msm8953-common
+VENDOR=xiaomi
+
 # Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
@@ -57,17 +61,31 @@ setup_vendor "$DEVICE_COMMON" "$VENDOR" "$LINEAGE_ROOT" true "$CLEAN_VENDOR"
 
 extract "$MY_DIR"/proprietary-files-qc.txt "$SRC" "$SECTION"
 
-if [ -s "$MY_DIR"/../$DEVICE/proprietary-files.txt ]; then
+if [ -s "$MY_DIR"/proprietary-files.txt ]; then
     # Reinitialize the helper for device
     setup_vendor "$DEVICE" "$VENDOR" "$LINEAGE_ROOT" false "$CLEAN_VENDOR"
 
-    extract "$MY_DIR"/../$DEVICE/proprietary-files.txt "$SRC" "$SECTION"
-fi
+    extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
 
-if [ "$DEVICE" = "mido" ]; then
-    # Hax for cam configs
-    CAMERA2_SENSOR_MODULES="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary/vendor/lib/libmmcamera2_sensor_modules.so
-    sed -i "s|/system/etc/camera/|/vendor/etc/camera/|g" "$CAMERA2_SENSOR_MODULES"
+    DEVICE_BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
+
+    sed -i \
+        's/\/system\/etc\//\/vendor\/etc\//g' \
+        "$DEVICE_BLOB_ROOT"/vendor/lib/libmmcamera2_sensor_modules.so
+
+    sed -i \
+         "s|/data/misc/camera/cam_socket|/data/vendor/qcam/cam_socket|g" \
+         "$DEVICE_BLOB_ROOT"/vendor/bin/mm-qcamera-daemon
+
+;;
+        vendor/lib64/hw/android.hardware.keymaster@3.0-impl.so|vendor/lib64/libsoftkeymasterdevice-v27.so|vendor/lib64/libkeymaster_messages-v27.so|vendor/lib64/libkeymaster_portable-v27.so|vendor/lib64/libkeymaster_staging-v27.so|vendor/lib64/libsoftkeymaster-v27.so)
+                patchelf --replace-needed "libsoftkeymasterdevice.so" "libsoftkeymasterdevice-v27.so" "${2}"
+                patchelf --replace-needed "libkeymaster_messages.so" "libkeymaster_messages-v27.so" "${2}"
+                patchelf --replace-needed "libkeymaster_portable.so" "libkeymaster_portable-v27.so" "${2}"
+                patchelf --replace-needed "libkeymaster_staging.so" "libkeymaster_staging-v27.so" "${2}"
+                patchelf --replace-needed "libsoftkeymaster.so" "libsoftkeymaster-v27.so" "${2}"
+                patchelf --set-soname $(basename "${2}") "${2}"
+        ;;
 fi
 
 "$MY_DIR"/setup-makefiles.sh
