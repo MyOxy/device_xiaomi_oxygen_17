@@ -42,13 +42,17 @@
         </receiver>
 
         <service android:name=".DozeService"
-                 android:permission="XiaomiDozeService">
+                 android:permission="OneplusDozeService">
         </service>
 
         <activity
             android:name=".DozeSettingsActivity"
             android:label="@string/ambient_display_title"
             android:theme="@style/Theme.Main">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
     </application>
