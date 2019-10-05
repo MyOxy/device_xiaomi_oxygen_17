@@ -1,4 +1,5 @@
-# Copyright (c) 2009-2012, 2014-2017, The Linux Foundation. All rights reserved.
+#! /vendor/bin/sh
+ # Copyright (c) 2009-2016, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -25,40 +26,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-on post-fs-data
-    mkdir /data/fpc 0770 system system
-    mkdir /data/fpc/s 0771 system system
-    mkdir /data/thermal 0771 system system
-    mkdir /data/misc/goodix 0770 system system
-    mkdir /data/gf_data 0770 system system
-
-on init
-    chown system system /dev/goodix_fp
-    # set gpio13 could be read by all
-    chmod 0644 /dev/gpio_rf
-
-on boot
-    chown system system /dev/goodix_fp
-    chmod 0644 /dev/goodix_fp
-
-    chown system system /sys/bus/platform/devices/soc:fingerprint_fpc/irq
-    chown system system /sys/bus/platform/devices/soc:fingerprint_fpc/wakeup_enable
-    chown system system /sys/bus/platform/devices/soc:fingerprint_fpc/hw_reset
-    chown system system /sys/bus/platform/devices/soc:fingerprint_fpc/device_prepare
-    chown system system /sys/bus/platform/devices/soc:fingerprint_fpc/vendor
-    chmod 0700 /sys/bus/platform/devices/soc:fingerprint_fpc/irq
-    chmod 0700 /sys/bus/platform/devices/soc:fingerprint_fpc/wakeup_enable
-    chmod 0700 /sys/bus/platform/devices/soc:fingerprint_fpc/hw_reset
-    chmod 0700 /sys/bus/platform/devices/soc:fingerprint_fpc/device_prepare
-    chmod 0700 /sys/bus/platform/devices/soc:fingerprint_fpc/vendor
-
-service goodixfp /vendor/bin/goodixfp
-    class late_start
-    user system
-    group system sdcard_rw
-    oneshot
-    
-service goodix_script /vendor/bin/init.goodix.sh
-    class late_start
-    user root
-    oneshot
+ if [ ! -f /data/system/users/0/settings_fingerprint.xml ]; then
+    rm -rf /persist/data/gxfp/0_0
+fi
